@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   flaskapp:
-    image: kartik71845/flask-app:latest
+    image: aneez12/flask-app:latest
     container_name: flask-app
     ports:
       - "80:5000"

@@ -134,13 +134,90 @@ jobs:
         docker compose up -d
         EOF
 
-🔐 GitHub Secrets Used
-Secret Name	Purpose
-DOCKERHUB_USERNAME	Login to Docker Hub
-DOCKERHUB_PASSWORD	Docker Hub access token
-EC2_HOST	EC2 public IP address
-EC2_USER	Linux username (usually ubuntu)
-EC2_SSH_KEY	EC2 private key (.pem contents)
+🔐 GitHub Secrets Setup
+
+**Required Secrets:**
+| Secret Name | Purpose |
+|------------|---------|
+| `DOCKERHUB_USERNAME` | Your Docker Hub username |
+| `DOCKERHUB_PASSWORD` | Docker Hub access token (or password) |
+| `EC2_HOST` | EC2 public IP address |
+| `EC2_USER` | Linux username (depends on AMI - see below) |
+| `EC2_SSH_KEY` | EC2 private key (.pem contents) |
+
+**How to Find Your EC2 Username:**
+
+The EC2 username depends on the **AMI (Amazon Machine Image)** you used to launch your instance:
+
+| AMI Type | Default Username |
+|----------|-----------------|
+| **Ubuntu** | `ubuntu` |
+| **Amazon Linux 2** | `ec2-user` |
+| **Amazon Linux 2023** | `ec2-user` |
+| **Debian** | `admin` |
+| **CentOS** | `centos` |
+| **RHEL (Red Hat)** | `ec2-user` |
+| **SUSE** | `ec2-user` |
+| **Fedora** | `fedora` |
+
+**Methods to Find Your EC2 Username:**
+
+1. **Check AWS Console:**
+   - Go to EC2 Dashboard → Select your instance
+   - Look at the **AMI ID** or **AMI name** in the instance details
+   - Match it to the table above
+
+2. **Check AMI Documentation:**
+   - In EC2 Console, click on the AMI ID link
+   - AWS documentation will show the default username
+
+3. **Try Common Usernames:**
+   - Most common: `ubuntu` (for Ubuntu Server)
+   - Second most common: `ec2-user` (for Amazon Linux)
+
+4. **Test via SSH:**
+   ```bash
+   # Try with ubuntu (most common for Ubuntu AMIs)
+   ssh -i your-key.pem ubuntu@your-ec2-ip
+   
+   # If that doesn't work, try ec2-user
+   ssh -i your-key.pem ec2-user@your-ec2-ip
+   ```
+
+**For This Project:**
+Since the project mentions "AWS EC2 (Ubuntu Server)", the username is most likely: **`ubuntu`**
+
+**How to Add Docker Hub Secrets to GitHub:**
+
+1. **Navigate to your GitHub repository**
+   - Go to your repository on GitHub
+   - Click on **Settings** (top menu bar)
+
+2. **Access Secrets and Variables**
+   - In the left sidebar, click on **Secrets and variables** → **Actions**
+
+3. **Add DOCKERHUB_USERNAME:**
+   - Click **New repository secret**
+   - Name: `DOCKERHUB_USERNAME`
+   - Value: Your Docker Hub username (e.g., `yourusername`)
+   - Click **Add secret**
+
+4. **Add DOCKERHUB_PASSWORD:**
+   - Click **New repository secret** again
+   - Name: `DOCKERHUB_PASSWORD`
+   - Value: Your Docker Hub password or access token
+     - **Note:** For better security, use a Docker Hub Access Token instead of your password
+     - To create a token: Docker Hub → Account Settings → Security → New Access Token
+   - Click **Add secret**
+
+5. **Verify Secrets:**
+   - You should now see both `DOCKERHUB_USERNAME` and `DOCKERHUB_PASSWORD` in your secrets list
+   - Secrets are encrypted and only visible when adding/editing (not after saving)
+
+**Quick Access Path:**
+```
+Repository → Settings → Secrets and variables → Actions → New repository secret
+```
 🔥 Deployment Flow Diagram
 
 Developer → GitHub Repo → GitHub Actions → Docker Hub → EC2 (SSH) → Docker Compose → Flask App Live
