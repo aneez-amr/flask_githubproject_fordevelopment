@@ -2,7 +2,8 @@ version: '3.8'
 
 services:
   flaskapp:
-    build: .
+    build: 
+      context: .          # directory containing Dockerfile
     image: flask-app:latest
     container_name: flask-app
     ports:
